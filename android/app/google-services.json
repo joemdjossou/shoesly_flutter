@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "385630137360",
+    "project_id": "shoesfly-252ac",
+    "storage_bucket": "shoesfly-252ac.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385630137360:android:08244e22cfd1e8cbc2ae95",
+        "android_client_info": {
+          "package_name": "com.example.shoesly_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAV-WhNq48Abr7nL_4zXIlmXCOCzP_ntDc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
