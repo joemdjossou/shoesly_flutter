@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shoesly_flutter/core/providers/theme_provider.dart';
+import 'package:shoesly_flutter/core/routes/app_routes.dart';
 import 'package:shoesly_flutter/core/screens/discover_page.dart';
 import 'package:shoesly_flutter/firebase_options.dart';
 
@@ -47,8 +48,8 @@ class MyApp extends StatelessWidget {
       theme: mainProvider.themeData,
       themeAnimationCurve: Curves.decelerate,
       themeAnimationDuration: const Duration(milliseconds: 500),
-      // navigatorKey: AppRouter.navigatorKey,
-      // onGenerateRoute: AppRouter.onGenerateRoute,
+      navigatorKey: AppRouter.navigatorKey,
+      onGenerateRoute: AppRouter.onGenerateRoute,
       locale: DevicePreview.locale(context),
       builder: DevicePreview.appBuilder,
       home: const DiscoverPage(),

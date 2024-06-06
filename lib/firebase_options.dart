@@ -65,4 +65,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'shoesfly-252ac.appspot.com',
     iosBundleId: 'com.example.shoeslyFlutter',
   );
+
 }
