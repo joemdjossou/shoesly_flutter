@@ -8,8 +8,8 @@ ThemeData lightMode = ThemeData(
   fontFamily: "Urbanist",
   brightness: Brightness.light,
   scaffoldBackgroundColor: AppColors.primaryBackgroundColor,
-  appBarTheme: const AppBarTheme(
-    backgroundColor: Colors.white,
+  appBarTheme: AppBarTheme(
+    backgroundColor: AppColors.primaryBackgroundColor,
   ),
 );
 
@@ -19,7 +19,7 @@ ThemeData darkMode = ThemeData(
   fontFamily: "Urbanist",
   brightness: Brightness.dark,
   scaffoldBackgroundColor: AppColors.primaryBackgroundColor,
-  appBarTheme: const AppBarTheme(
-    backgroundColor: Colors.white,
+  appBarTheme: AppBarTheme(
+    backgroundColor: AppColors.primaryBackgroundColor,
   ),
 );

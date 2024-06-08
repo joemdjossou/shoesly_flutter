@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:shoesly_flutter/core/providers/shoe_provider.dart';
 import 'package:shoesly_flutter/core/providers/theme_provider.dart';
 import 'package:shoesly_flutter/core/routes/app_routes.dart';
 import 'package:shoesly_flutter/core/screens/discover_page.dart';
@@ -20,9 +21,8 @@ void main() async {
       DevicePreview(
         builder: (context) => MultiProvider(
           providers: [
-            ChangeNotifierProvider(
-              create: (_) => ThemeProvider(),
-            )
+            ChangeNotifierProvider(create: (context) => ThemeProvider()),
+            ChangeNotifierProvider(create: (context) => ShoeProvider()),
           ],
           child: const MyApp(),
         ),
