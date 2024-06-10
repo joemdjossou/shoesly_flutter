@@ -56,14 +56,14 @@ A code test mobile application for Priority Soft
 ### App Local Image
 
 <div style="display: flex; justify-content: center;">
-    <img src="assets/app/discoverPage.png" alt="App Showcase Discover" width="200"/>
-    <img src="assets/app/dbErrorPage.png" alt="App Showcase Database" width="1290"/>
-    <img src="assets/app/filterPage.png" alt="App Showcase Filter" width="200"/>
-    <img src="assets/app/detailsPage.png" alt="App Showcase Details" width="200"/>
-    <img src="assets/app/modalBar.png" alt="App Showcase Modal Bar" width="200"/>
-    <img src="assets/app/reviewPage.png" alt="App Showcase Reviews" width="200"/>
-    <img src="assets/app/cartPage.png" alt="App Showcase Cart Page" width="200"/>
-    <img src="assets/app/orderSummary.png" alt="App Showcase Order Summary" width="200"/>
+    <img src="assets/app/discoverPage.png" alt="App Showcase Discover" width="300"/>
+    <img src="assets/app/dbErrorPage.png" alt="App Showcase Database" width="300"/>
+    <img src="assets/app/filterPage.png" alt="App Showcase Filter" width="300"/>
+    <img src="assets/app/detailsPage.png" alt="App Showcase Details" width="300"/>
+    <img src="assets/app/modalBar.png" alt="App Showcase Modal Bar" width="300"/>
+    <img src="assets/app/reviewPage.png" alt="App Showcase Reviews" width="300"/>
+    <img src="assets/app/cartPage.png" alt="App Showcase Cart Page" width="300"/>
+    <img src="assets/app/orderSummary.png" alt="App Showcase Order Summary" width="300"/>
 </div>
 
 
