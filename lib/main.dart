@@ -3,6 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:shoesly_flutter/core/providers/cart_provider.dart';
+import 'package:shoesly_flutter/core/providers/selected_shoe_provider.dart';
 import 'package:shoesly_flutter/core/providers/shoe_provider.dart';
 import 'package:shoesly_flutter/core/providers/theme_provider.dart';
 import 'package:shoesly_flutter/core/routes/app_routes.dart';
@@ -23,6 +25,8 @@ void main() async {
           providers: [
             ChangeNotifierProvider(create: (context) => ThemeProvider()),
             ChangeNotifierProvider(create: (context) => ShoeProvider()),
+            ChangeNotifierProvider(create: (context) => SelectedShoeProvider()),
+            ChangeNotifierProvider(create: (context) => CartProvider()),
           ],
           child: const MyApp(),
         ),

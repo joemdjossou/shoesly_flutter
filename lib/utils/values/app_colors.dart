@@ -11,6 +11,7 @@ class AppColors {
   static final Color shadeGreyAccentColor400 = HexColor.fromHex("6F6F6F");
   static final Color shadeGreyAccentColor300 = HexColor.fromHex("B7B7B7");
   static final Color greenTaleColor = HexColor.fromHex("648B8B");
+  static final Color greenSuccess = HexColor.fromHex("4CAF50");
   static final Color blueColor500 = HexColor.fromHex("2952CC");
   static final Color redColor500 = HexColor.fromHex("FF4C5E");
 

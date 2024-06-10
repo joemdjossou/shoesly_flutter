@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:shoesly_flutter/core/models/shoe_model.dart';
+import 'package:shoesly_flutter/core/providers/selected_shoe_provider.dart';
 import 'package:shoesly_flutter/core/providers/shoe_provider.dart';
-import 'package:shoesly_flutter/core/providers/theme_provider.dart';
 import 'package:shoesly_flutter/core/screens/cart_page.dart';
 import 'package:shoesly_flutter/core/screens/shoe_details.dart';
 import 'package:shoesly_flutter/utils/values.dart';
@@ -20,9 +21,9 @@ class DiscoverPage extends StatefulWidget {
 }
 
 class _DiscoverPageState extends State<DiscoverPage> {
-  bool isLoaded = false;
+  bool? isLoaded;
+  bool? dbIsEmpty;
   String selectedBrand = "All";
-
   final List<String> filterBrandNames = [
     "All",
     "Nike",
@@ -32,15 +33,93 @@ class _DiscoverPageState extends State<DiscoverPage> {
     "Vans"
   ];
 
+  //shimmer effect on the cards
+  Shimmer loadingCardWidgets() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: MediaQuery.sizeOf(context).height * 0.145,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          AppSpaces.verticalSpace10,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: double.infinity,
+                height: 18,
+                decoration: BoxDecoration(
+                    color: Colors.grey, borderRadius: BorderRadius.circular(4)),
+              ),
+              AppSpaces.verticalSpace10,
+              Container(
+                width: MediaQuery.sizeOf(context).width / 3,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              AppSpaces.verticalSpace5,
+              Container(
+                width: MediaQuery.sizeOf(context).width / 6,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   void initState() {
-    Provider.of<ShoeProvider>(context, listen: false).fetchDocuments();
+    getData();
     super.initState();
+  }
+
+  getData() async {
+    //fetches the shoes document from the database
+    List<Shoe>? shoes = await Provider.of<ShoeProvider>(context, listen: false)
+        .fetchDocuments();
+    print(shoes);
+
+    //condition checking
+    if (shoes!.isNotEmpty) {
+      //shoe instances loaded successfully
+      setState(() {
+        isLoaded = true;
+      });
+    } else {
+      // shoe instance is empty
+      // anything else is an error so the db has an issue
+      setState(() {
+        // stops the loader
+        isLoaded = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    var mainProvider = Provider.of<ThemeProvider>(context, listen: true);
     var shoes = Provider.of<ShoeProvider>(context).shoes;
     return AnnotatedRegion(
       value: SystemUiOverlayStyle.dark,
@@ -100,20 +179,64 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   ],
                 ),
               ),
-              Expanded(
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    childAspectRatio: MediaQuery.sizeOf(context).height / 1400,
-                  ),
-                  itemCount: shoes.length * 10,
-                  itemBuilder: (BuildContext context, int index) {
-                    final shoe = shoes[index % shoes.length];
-                    return _shoeCard(context, shoe);
-                  },
-                ),
-              ),
+              (isLoaded == true)
+                  ? Expanded(
+                      child: GridView.builder(
+                        // HAS A VALUE (TRUE)
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          childAspectRatio:
+                              MediaQuery.sizeOf(context).height / 1400,
+                        ),
+                        itemCount: shoes.length * 10,
+                        itemBuilder: (BuildContext context, int index) {
+                          final shoe = shoes[index % shoes.length];
+                          return _shoeCard(context, shoe);
+                        },
+                      ),
+                    )
+                  : (isLoaded == false)
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // IS EMPTY OR HAS AN ISSUE (FALSE)
+                            Column(
+                              children: [
+                                Lottie.asset(
+                                  'assets/icons/database_error_lottie.json',
+                                ),
+                                AppSpaces.verticalSpace20,
+                                Center(
+                                  child: Text(
+                                    'The database is having an error ${TextSpacing.nextLine} or is empty',
+                                    textAlign: TextAlign.center,
+                                    style: Constants.textStyle.copyWith(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        )
+                      : Expanded(
+                          child: GridView.builder(
+                            // HAS A VALUE (TRUE)
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 20,
+                              childAspectRatio:
+                                  MediaQuery.sizeOf(context).height / 1400,
+                            ),
+                            itemCount: 12,
+                            itemBuilder: (BuildContext context, int index) {
+                              return loadingCardWidgets();
+                            },
+                          ),
+                        ),
             ],
           ),
         ),
@@ -164,19 +287,21 @@ Widget _shoeCard(BuildContext context, Shoe shoe) {
     );
   }
 
+  String? imageUrl;
+
   return GestureDetector(
     onTap: () async {
-      // final selectedShoeProvider =
-      // Provider.of<SelectedShoeProvider>(context, listen: false);
+      final selectedShoeProvider =
+          Provider.of<SelectedShoeProvider>(context, listen: false);
 
-      // final imageUrls = await Future.wait([
-      //   shoe.loadBrandLogoUrl(shoe.brandRef),
-      //   shoe.loadImageUrl(),
-      // ]);
+      final imageUrls = await Future.wait([
+        // shoe.loadBrandLogoUrl(shoe.brandRef),
+        shoe.loadImageUrl(),
+      ]);
 
-      // imageUrl = imageUrls[1];
+      imageUrl = imageUrls[0];
 
-      // selectedShoeProvider.setSelectedShoe(shoe, imageUrl);
+      selectedShoeProvider.setSelectedShoe(shoe, imageUrl);
 
       Navigator.pushNamed(context, ShoeDetails.id);
     },
@@ -225,11 +350,10 @@ Widget _shoeCard(BuildContext context, Shoe shoe) {
                           child: Row(
                             children: [
                               SvgPicture.asset(
-                                'assets/icons/adidasLogo_black.svg',
+                                'assets/icons/${shoe.brand}.svg',
                                 height:
                                     MediaQuery.sizeOf(context).height * 0.03,
                                 width: MediaQuery.sizeOf(context).height * 0.03,
-                                color: AppColors.primaryNeutral300,
                               ),
                             ],
                           ),
@@ -245,6 +369,7 @@ Widget _shoeCard(BuildContext context, Shoe shoe) {
                           child: Center(
                             child: Image.network(
                               snapshot.data![0]!,
+                              height: MediaQuery.sizeOf(context).height * 0.1,
                             ),
                           ),
                         ),
@@ -293,7 +418,7 @@ Widget _shoeCard(BuildContext context, Shoe shoe) {
         Text(
           "\$${shoe.price}",
           style: Constants.subHeadingStyle.copyWith(
-            fontSize: 17,
+            fontSize: 16,
           ),
         )
       ],

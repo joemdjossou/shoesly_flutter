@@ -7,18 +7,22 @@ class ShoeProvider extends ChangeNotifier {
 
   List<Shoe> get shoes => _shoes;
 
-  Future<void> fetchDocuments() async {
+  Future<List<Shoe>?> fetchDocuments() async {
     try {
-      QuerySnapshot querySnapshot =
-          await FirebaseFirestore.instance.collection("shoes").get();
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("shoes")
+          .orderBy('id', descending: false)
+          .get();
 
       List<Shoe> fetchedShoes = [];
 
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
         List<DocumentReference> colorRefs =
             List<DocumentReference>.from(doc['colors']);
-        // List<DocumentReference> reviewRefs =
-        // List<DocumentReference>.from(doc['reviews']);
+        print(colorRefs);
+        List<DocumentReference> reviewRefs =
+            List<DocumentReference>.from(doc['reviews']);
+        print(reviewRefs);
 
         List<double> sizes = [];
         List<dynamic> rawSizes = doc['sizes'];
@@ -31,21 +35,26 @@ class ShoeProvider extends ChangeNotifier {
         fetchedShoes.add(
           Shoe(
             id: doc.id,
+            brand: doc['brand'],
+            brandRef: doc['brandRef'],
             description: doc['description'],
             name: doc['name'],
             price: doc['price'],
             sizes: sizes,
             imageUrl: doc['imageUrl'],
-            totalReviews: doc['total_reviews'],
+            totalReviews: doc['totalReviews'],
             colorRefs: colorRefs,
+            reviewRefs: reviewRefs,
           ),
         );
       }
 
       _shoes = fetchedShoes;
       notifyListeners();
+      return shoes;
     } catch (e) {
       print("Error fetching data: $e");
+      return shoes;
     }
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shoesly_flutter/core/screens/all_reviews_%20page.dart';
+import 'package:shoesly_flutter/core/screens/all_reviews_page.dart';
 import 'package:shoesly_flutter/core/screens/cart_page.dart';
 import 'package:shoesly_flutter/core/screens/checkout_page.dart';
 import 'package:shoesly_flutter/core/screens/discover_page.dart';
@@ -26,7 +26,7 @@ class AppRouter {
       // All Reviews Page Route
       case ReviewsPage.id:
         return MaterialPageRoute(
-          builder: (_) => const ReviewsPage(),
+          builder: (_) => ReviewsPage(),
         );
 
       // Cart Page Route
