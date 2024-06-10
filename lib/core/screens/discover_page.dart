@@ -8,6 +8,7 @@ import 'package:shoesly_flutter/core/models/shoe_model.dart';
 import 'package:shoesly_flutter/core/providers/selected_shoe_provider.dart';
 import 'package:shoesly_flutter/core/providers/shoe_provider.dart';
 import 'package:shoesly_flutter/core/screens/cart_page.dart';
+import 'package:shoesly_flutter/core/screens/filter_page.dart';
 import 'package:shoesly_flutter/core/screens/shoe_details.dart';
 import 'package:shoesly_flutter/utils/values.dart';
 import 'package:shoesly_flutter/utils/values/app_sizes.dart';
@@ -22,7 +23,7 @@ class DiscoverPage extends StatefulWidget {
 
 class _DiscoverPageState extends State<DiscoverPage> {
   bool? isLoaded;
-  bool? dbIsEmpty;
+  bool? dbIsNotEmpty;
   String selectedBrand = "All";
   final List<String> filterBrandNames = [
     "All",
@@ -32,6 +33,20 @@ class _DiscoverPageState extends State<DiscoverPage> {
     "Reebok",
     "Vans"
   ];
+
+  //initializing the shoes to be empty
+  List<Shoe> allShoes = [];
+  List<Shoe> _filteredShoes = [];
+
+  // function to filterShoes
+  void _filterShoes() {
+    _filteredShoes = allShoes;
+    if (selectedBrand != 'All') {
+      _filteredShoes = allShoes
+          .where((shoe) => selectedBrand.toLowerCase() == shoe.brandRef.id)
+          .toList();
+    }
+  }
 
   //shimmer effect on the cards
   Shimmer loadingCardWidgets() {
@@ -90,17 +105,49 @@ class _DiscoverPageState extends State<DiscoverPage> {
     );
   }
 
+  Shimmer loadingAverage() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 15,
+                width: MediaQuery.sizeOf(context).width / 3,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void initState() {
     getData();
     super.initState();
+    print(isLoaded);
   }
 
   getData() async {
     //fetches the shoes document from the database
     List<Shoe>? shoes = await Provider.of<ShoeProvider>(context, listen: false)
         .fetchDocuments();
-    print(shoes);
+
+    setState(() {
+      allShoes = shoes!;
+      _filteredShoes = allShoes;
+    });
+
+    print(_filteredShoes);
 
     //condition checking
     if (shoes!.isNotEmpty) {
@@ -108,19 +155,19 @@ class _DiscoverPageState extends State<DiscoverPage> {
       setState(() {
         isLoaded = true;
       });
-    } else {
+    } else if (shoes.isEmpty) {
       // shoe instance is empty
       // anything else is an error so the db has an issue
       setState(() {
         // stops the loader
         isLoaded = false;
+        dbIsNotEmpty = false;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    var shoes = Provider.of<ShoeProvider>(context).shoes;
     return AnnotatedRegion(
       value: SystemUiOverlayStyle.dark,
       child: Scaffold(
@@ -164,6 +211,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
                         onPressed: () {
                           setState(() {
                             selectedBrand = brandName;
+                            _filterShoes();
+                            print(_filteredShoes.length);
+                            print(isLoaded);
+                            print(dbIsNotEmpty);
                           });
                         },
                         child: Text(
@@ -189,14 +240,15 @@ class _DiscoverPageState extends State<DiscoverPage> {
                           childAspectRatio:
                               MediaQuery.sizeOf(context).height / 1400,
                         ),
-                        itemCount: shoes.length * 10,
+                        itemCount: _filteredShoes.length,
                         itemBuilder: (BuildContext context, int index) {
-                          final shoe = shoes[index % shoes.length];
+                          final shoe = _filteredShoes[index];
                           return _shoeCard(context, shoe);
                         },
                       ),
                     )
-                  : (isLoaded == false)
+                  : ((isLoaded == null && dbIsNotEmpty == null) ||
+                          (isLoaded == false && dbIsNotEmpty == false))
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -208,15 +260,23 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                 ),
                                 AppSpaces.verticalSpace20,
                                 Center(
-                                  child: Text(
-                                    'The database is having an error ${TextSpacing.nextLine} or is empty',
-                                    textAlign: TextAlign.center,
-                                    style: Constants.textStyle.copyWith(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
+                                  child: TweenAnimationBuilder(
+                                      tween: Tween<double>(begin: 0, end: 20.0),
+                                      duration: const Duration(seconds: 2),
+                                      builder: (BuildContext context,
+                                          double value, Widget? child) {
+                                        return Text(
+                                          'The database is having an error ${TextSpacing.nextLine} or is empty'
+                                          '${TextSpacing.nextLine + TextSpacing.nextLine}Check your network too',
+                                          textAlign: TextAlign.center,
+                                          style: Constants.textStyle.copyWith(
+                                            fontSize: value,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        );
+                                      } // TextStyle, Text
+                                      ),
+                                ), // TweenAnimationBuilder
                               ],
                             )
                           ],
@@ -248,7 +308,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
           icon: SvgPicture.asset("assets/icons/setting.svg"),
           backgroundColor: Colors.black,
           onPressed: () {
-            // Add your onPressed logic here
+            // FILTER PAGE HERE
+            Navigator.pushNamed(context, FilterPage.id);
           },
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -283,6 +344,31 @@ Widget _shoeCard(BuildContext context, Shoe shoe) {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Shimmer loadingAverage() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 15,
+                width: MediaQuery.sizeOf(context).width / 14,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -396,12 +482,38 @@ Widget _shoeCard(BuildContext context, Shoe shoe) {
               height: MediaQuery.sizeOf(context).height * 0.015,
             ),
             AppSpaces.horizontalSpace5,
-            Text(
-              '4.5',
-              style: Constants.textStyle.copyWith(
-                fontWeight: FontWeight.w700,
-                fontSize: 13,
-              ),
+
+            //fetch average rating
+            FutureBuilder<List<double?>>(
+              future: Future.wait([
+                shoe.calculateAverageRating(),
+              ]),
+              builder: (_, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Center(child: loadingAverage()),
+                    ],
+                  );
+                } else if (snapshot.hasError || snapshot.data![0] == null) {
+                  return Text(
+                    'error',
+                    style: Constants.textStyle.copyWith(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                  );
+                } else {
+                  return Text(
+                    snapshot.data![0]!.toStringAsFixed(2),
+                    style: Constants.textStyle.copyWith(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                  );
+                }
+              },
             ),
             AppSpaces.horizontalSpace5,
             Text(

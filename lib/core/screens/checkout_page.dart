@@ -63,7 +63,7 @@ class CheckoutPage extends StatelessWidget {
           "Order Summary",
           style: TextStyle(
             color: Colors.black,
-            fontSize: Sizes.fontSize16,
+            fontSize: Sizes.fontSize20,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -194,11 +194,7 @@ class CheckoutPage extends StatelessWidget {
                             ),
                             Text(
                               "${detail['brand']} . ${detail['color']} . ${detail['size']} . Qty ${detail['quantity']}",
-                              style: TextStyle(
-                                fontSize: Sizes.fontSize14,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.shadeGreyAccentColor300,
-                              ),
+                              style: Constants.textStyle,
                             ),
                           ],
                         ),

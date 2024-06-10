@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -48,7 +49,6 @@ class _ShoeDetailsState extends State<ShoeDetails> {
     final colors = await selectedShoe.getShoeColors();
     setState(() {
       _shoeColors = colors;
-      print(_shoeColors);
     });
   }
 
@@ -208,7 +208,7 @@ class _ShoeDetailsState extends State<ShoeDetails> {
                                     setState(() {
                                       _selectedColorName = shoeColor.name;
                                       // testing the color
-                                      print(shoeColor.hexCode);
+                                      // print(shoeColor.hexCode);
                                     });
                                   },
                                   child: Container(
@@ -264,16 +264,99 @@ class _ShoeDetailsState extends State<ShoeDetails> {
                     ),
                   ),
 
-                  AppSpaces.verticalSpace5,
+                  AppSpaces.verticalSpace20,
 
                   // total number of reviews display
-                  Text(
-                    '($selectedTotalReviews Reviews)',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: Sizes.fontSize14,
-                      color: AppColors.shadeGreyAccentColor300,
-                    ),
+                  Row(
+                    children: [
+                      FutureBuilder<List<double?>>(
+                        future: Future.wait([
+                          selectedShoeProvider.selectedShoe
+                              .calculateAverageRating(),
+                        ]),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Center(child: loadingStars()),
+                              ],
+                            );
+                          } else if (snapshot.hasError ||
+                              snapshot.data![0] == null) {
+                            return Row(
+                              children: [
+                                Row(
+                                  children: List.generate(
+                                    5,
+                                    (index) => Image.asset(
+                                      'assets/icons/star.png',
+                                      height:
+                                          MediaQuery.sizeOf(context).height /
+                                              50,
+                                      color: AppColors.primaryNeutral200,
+                                    ),
+                                  ),
+                                ),
+                                const Text(
+                                  "error",
+                                  style: TextStyle(
+                                    fontSize: Sizes.fontSize14,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ],
+                            );
+                          } else {
+                            return Row(
+                              children: [
+                                Row(
+                                  children: List.generate(
+                                    snapshot.data![0]!.toInt(),
+                                    (index) => Image.asset(
+                                      'assets/icons/star.png',
+                                      height:
+                                          MediaQuery.sizeOf(context).height /
+                                              50,
+                                    ),
+                                  ),
+                                ),
+                                Row(
+                                  children: List.generate(
+                                    (5 - snapshot.data![0]!.toInt()),
+                                    (index) => Image.asset(
+                                      'assets/icons/star.png',
+                                      height:
+                                          MediaQuery.sizeOf(context).height /
+                                              50,
+                                      color: AppColors.primaryNeutral200,
+                                    ),
+                                  ),
+                                ),
+                                AppSpaces.horizontalSpace10,
+                                Text(
+                                  snapshot.data![0]!.toStringAsFixed(2),
+                                  style: const TextStyle(
+                                    fontSize: Sizes.fontSize14,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+                        },
+                      ),
+                      AppSpaces.horizontalSpace5,
+                      Text(
+                        '($selectedTotalReviews Reviews)',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: Sizes.fontSize14,
+                          color: AppColors.shadeGreyAccentColor300,
+                        ),
+                      ),
+                    ],
                   ),
 
                   AppSpaces.verticalSpace30,
@@ -443,68 +526,73 @@ class _ShoeDetailsState extends State<ShoeDetails> {
               child: Container(
                 color: Colors.white,
                 padding: const EdgeInsets.all(Sizes.md),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Price",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.shadeGreyAccentColor400,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: Sizes.xs,
-                        ),
-                        Text(
-                          '\$$selectedPrice',
-                          style: const TextStyle(
-                            fontSize: Sizes.fontSize16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        if (_selectedSizeIndex != -1) {
-                          _showAddToCartBottomSheet(context, selectedPrice);
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'Please select a shoe size',
-                                    overflow: TextOverflow.visible,
-                                    style: Constants.subHeadingStyle,
-                                  ),
-                                  AppSpaces.verticalSpace20,
-                                  IconButton(
-                                    onPressed: () {
-                                      //pop once to remove the dialog box
-                                      Navigator.pop(context);
-                                    },
-                                    icon: Icon(
-                                      Icons.cancel,
-                                      color: AppColors.redColor500,
-                                      size: 40.0,
-                                    ),
-                                  )
-                                ],
-                              ),
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.sizeOf(context).height / 80,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Price",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.shadeGreyAccentColor400,
                             ),
-                          );
-                        }
-                      },
-                      child: blackButton("ADD TO CART"),
-                    ),
-                  ],
+                          ),
+                          const SizedBox(
+                            height: Sizes.xs,
+                          ),
+                          Text(
+                            '\$$selectedPrice',
+                            style: const TextStyle(
+                              fontSize: Sizes.fontSize20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          if (_selectedSizeIndex != -1) {
+                            _showAddToCartBottomSheet(context, selectedPrice);
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Please select a shoe size',
+                                      overflow: TextOverflow.visible,
+                                      style: Constants.subHeadingStyle,
+                                    ),
+                                    AppSpaces.verticalSpace20,
+                                    IconButton(
+                                      onPressed: () {
+                                        //pop once to remove the dialog box
+                                        Navigator.pop(context);
+                                      },
+                                      icon: Icon(
+                                        Icons.cancel,
+                                        color: AppColors.redColor500,
+                                        size: 40.0,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: blackButton("ADD TO CART"),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -592,6 +680,31 @@ class _ShoeDetailsState extends State<ShoeDetails> {
     );
   }
 
+  Shimmer loadingStars() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 15,
+                width: MediaQuery.sizeOf(context).width / 3,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildCarouselItem(String? imageUrl) {
     return Image.network(
       imageUrl ?? "",
@@ -604,193 +717,197 @@ class _ShoeDetailsState extends State<ShoeDetails> {
     int quantity = 1;
 
     showModalBottomSheet(
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       context: context,
       builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Container(
-              padding: const EdgeInsets.all(Sizes.md),
+        return Padding(
+          padding:
+              // very important to be able to see what is being typed
+              EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                padding: const EdgeInsets.all(Sizes.md),
 
-              //decoration of the modal bottom sheet
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(Sizes.lg),
-                  topRight: Radius.circular(Sizes.lg),
+                //decoration of the modal bottom sheet
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(Sizes.lg),
+                    topRight: Radius.circular(Sizes.lg),
+                  ),
+                  color: AppColors.primaryBackgroundColor,
                 ),
-                color: AppColors.primaryBackgroundColor,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: Sizes.lg,
-                  vertical: Sizes.md,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 44,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: AppColors.shadeGreyAccentColor300,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: Sizes.lg,
+                    vertical: Sizes.md,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 44,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: AppColors.shadeGreyAccentColor300,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: Sizes.xl,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Add to Cart',
-                          style: TextStyle(
-                            fontSize: Sizes.fontSize20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: const Icon(Icons.close),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: Sizes.md),
-                    const Text(
-                      'Quantity',
-                      style: TextStyle(
-                        fontSize: Sizes.fontSize16,
-                        fontWeight: FontWeight.bold,
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: Sizes.xl),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Stack(
-                            alignment: Alignment.centerRight,
+                      AppSpaces.verticalSpace30,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Add to Cart',
+                            style: TextStyle(
+                              fontSize: Sizes.fontSize20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: const Icon(Icons.close),
+                          ),
+                        ],
+                      ),
+                      AppSpaces.verticalSpace30,
+                      const Text(
+                        'Quantity',
+                        style: TextStyle(
+                          fontSize: Sizes.fontSize16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      AppSpaces.verticalSpace20,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Stack(
+                              alignment: Alignment.centerRight,
+                              children: [
+                                TextField(
+                                  textAlign: TextAlign.center,
+                                  keyboardType: TextInputType.number,
+                                  controller: TextEditingController(
+                                      text: quantity.toString()),
+                                  onChanged: (newValue) {
+                                    if (int.tryParse(newValue) != null) {
+                                      setState(() {
+                                        quantity = int.parse(newValue);
+                                      });
+                                    }
+                                  },
+                                  decoration: const InputDecoration(
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.black, width: 2.0),
+                                    ),
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.grey, width: 1.0),
+                                    ),
+                                    contentPadding:
+                                        EdgeInsets.symmetric(vertical: 15.0),
+                                  ),
+                                ),
+                                Positioned(
+                                  right: 0,
+                                  child: Row(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            if (quantity > 1) quantity--;
+                                          });
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border:
+                                                Border.all(color: Colors.grey),
+                                          ),
+                                          child: const Icon(
+                                            Icons.remove,
+                                          ),
+                                        ),
+                                      ),
+                                      AppSpaces.horizontalSpace20,
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            quantity++;
+                                          });
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border:
+                                                Border.all(color: Colors.black),
+                                          ),
+                                          child: const Icon(
+                                            Icons.add,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: Sizes.md),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextField(
-                                textAlign: TextAlign.center,
-                                keyboardType: TextInputType.number,
-                                controller: TextEditingController(
-                                    text: quantity.toString()),
-                                onChanged: (newValue) {
-                                  if (int.tryParse(newValue) != null) {
-                                    setState(() {
-                                      quantity = int.parse(newValue);
-                                    });
-                                  }
-                                },
-                                decoration: const InputDecoration(
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.black, width: 2.0),
-                                  ),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.grey, width: 1.0),
-                                  ),
-                                  contentPadding:
-                                      EdgeInsets.symmetric(vertical: 15.0),
+                              Text(
+                                "Total Price",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.primaryNeutral300,
                                 ),
                               ),
-                              Positioned(
-                                right: 0,
-                                child: Row(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          if (quantity > 1) quantity--;
-                                        });
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border:
-                                              Border.all(color: Colors.grey),
-                                        ),
-                                        child: const Icon(
-                                          Icons.remove,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: Sizes.md,
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          quantity++;
-                                        });
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border:
-                                              Border.all(color: Colors.black),
-                                        ),
-                                        child: const Icon(
-                                          Icons.add,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                              const SizedBox(
+                                height: Sizes.xs,
+                              ),
+                              Text(
+                                '\$$selectedPrice',
+                                style: const TextStyle(
+                                  fontSize: Sizes.fontSize16,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: Sizes.md),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Total Price",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.primaryNeutral300,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: Sizes.xs,
-                            ),
-                            Text(
-                              '\$$selectedPrice',
-                              style: const TextStyle(
-                                fontSize: Sizes.fontSize16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            _addToCart(context, selectedPrice, quantity);
-                          },
-                          child: blackButton("ADD TO CART"),
-                        ),
-                      ],
-                    ),
-                  ],
+                          GestureDetector(
+                            onTap: () {
+                              _addToCart(context, selectedPrice, quantity);
+                            },
+                            child: blackButton("ADD TO CART"),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         );
       },
     );

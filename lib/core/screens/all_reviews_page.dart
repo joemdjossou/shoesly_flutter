@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:shoesly_flutter/core/models/shoe_model.dart';
 import 'package:shoesly_flutter/core/providers/selected_shoe_provider.dart';
 import 'package:shoesly_flutter/core/models/review_model.dart';
 import 'package:shoesly_flutter/utils/values.dart';
@@ -35,11 +37,13 @@ class _ReviewsPageState extends State<ReviewsPage> {
   final List<Review> _allReviews = [];
   List<Review> _filteredReviews = [];
   bool _isLoading = false;
+  double? average;
 
   @override
   void initState() {
     super.initState();
     _loadMoreReviews();
+    _getAverage();
     _scrollController.addListener(_onScroll);
   }
 
@@ -68,6 +72,12 @@ class _ReviewsPageState extends State<ReviewsPage> {
       _filterReviews();
       _isLoading = false;
     });
+  }
+
+  Future<double?> _getAverage() async {
+    final selectedShoe = widget.selectedShoeProvider!.selectedShoe;
+    average = await selectedShoe.calculateAverageRating();
+    return average;
   }
 
   void _filterReviews() {
@@ -178,19 +188,17 @@ class _ReviewsPageState extends State<ReviewsPage> {
             Navigator.pop(context);
           },
         ),
-        actions: const [
+        actions: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.star,
                 color: Colors.orange,
                 size: Sizes.md,
               ),
-              SizedBox(
-                width: Sizes.sm,
-              ),
+              AppSpaces.horizontalSpace5,
               Text(
-                "4.5",
+                "${average}",
                 style: TextStyle(
                   fontSize: Sizes.fontSize14,
                   fontWeight: FontWeight.w700,

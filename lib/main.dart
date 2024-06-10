@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:shoesly_flutter/core/providers/brands_provider.dart';
 import 'package:shoesly_flutter/core/providers/cart_provider.dart';
 import 'package:shoesly_flutter/core/providers/selected_shoe_provider.dart';
 import 'package:shoesly_flutter/core/providers/shoe_provider.dart';
@@ -20,17 +21,19 @@ void main() async {
     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
   ).then(
     (value) => runApp(
-      DevicePreview(
-        builder: (context) => MultiProvider(
-          providers: [
-            ChangeNotifierProvider(create: (context) => ThemeProvider()),
-            ChangeNotifierProvider(create: (context) => ShoeProvider()),
-            ChangeNotifierProvider(create: (context) => SelectedShoeProvider()),
-            ChangeNotifierProvider(create: (context) => CartProvider()),
-          ],
-          child: const MyApp(),
-        ),
+      // DevicePreview(
+      //   builder: (context) =>
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => ThemeProvider()),
+          ChangeNotifierProvider(create: (context) => ShoeProvider()),
+          ChangeNotifierProvider(create: (context) => SelectedShoeProvider()),
+          ChangeNotifierProvider(create: (context) => CartProvider()),
+          ChangeNotifierProvider(create: (_) => BrandsProvider()),
+        ],
+        child: const MyApp(),
       ),
+      // ),
     ),
   );
 }
@@ -54,8 +57,8 @@ class MyApp extends StatelessWidget {
       themeAnimationDuration: const Duration(milliseconds: 500),
       navigatorKey: AppRouter.navigatorKey,
       onGenerateRoute: AppRouter.onGenerateRoute,
-      locale: DevicePreview.locale(context),
-      builder: DevicePreview.appBuilder,
+      // locale: DevicePreview.locale(context),
+      // builder: DevicePreview.appBuilder,
       home: const DiscoverPage(),
     );
   }

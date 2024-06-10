@@ -7,6 +7,8 @@ class ShoeProvider extends ChangeNotifier {
 
   List<Shoe> get shoes => _shoes;
 
+  Shoe get shoeFiltered => _shoes[0];
+
   Future<List<Shoe>?> fetchDocuments() async {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance

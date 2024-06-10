@@ -28,7 +28,7 @@ class _CartPageState extends State<CartPage> {
           "Cart",
           style: TextStyle(
             color: Colors.black,
-            fontSize: Sizes.fontSize16,
+            fontSize: Sizes.fontSize20,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -41,164 +41,187 @@ class _CartPageState extends State<CartPage> {
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: Sizes.xl),
-        child: Stack(
-          children: [
-            ListView.builder(
-              itemCount: cartItems.length,
-              itemBuilder: (context, index) {
-                final item = cartItems[index];
-                return Dismissible(
-                  key: Key(item.name),
-                  background: Container(
-                    color: Colors.red,
-                    alignment: Alignment.centerRight,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: const Icon(Icons.delete, color: Colors.white),
+      body: Stack(
+        children: [
+          ListView.builder(
+            itemCount: cartItems.length,
+            itemBuilder: (context, index) {
+              final item = cartItems[index];
+              return Dismissible(
+                key: Key(item.name),
+                background: Container(
+                  alignment: Alignment.centerRight,
+                  decoration: BoxDecoration(
+                    color: AppColors.redColor500,
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  onDismissed: (direction) {
-                    cartProvider.deleteItem(item);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(Sizes.md),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade300,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Center(
-                              child: Image.network(
-                                item.imageUrl,
-                                fit: BoxFit.contain,
-                              ),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: SvgPicture.asset(
+                    'assets/icons/trash.svg',
+                    height: 25,
+                  ),
+                ),
+                onDismissed: (direction) {
+                  cartProvider.deleteItem(item);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(Sizes.md),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(
+                            child: Image.network(
+                              item.imageUrl,
+                              fit: BoxFit.contain,
                             ),
                           ),
                         ),
-                        const SizedBox(width: Sizes.md),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                item.name,
-                                style: const TextStyle(
-                                  fontSize: Sizes.fontSize16,
-                                  fontWeight: FontWeight.w600,
+                      ),
+                      const SizedBox(width: Sizes.md),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item.name,
+                              style: const TextStyle(
+                                fontSize: Sizes.fontSize16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: Sizes.xs),
+                            Row(
+                              children: [
+                                Text(
+                                  item.brand,
+                                  style: const TextStyle(
+                                    fontSize: Sizes.fontSize14,
+                                    color: Colors.grey,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: Sizes.xs),
-                              Row(
-                                children: [
-                                  Text(
-                                    item.brand,
-                                    style: const TextStyle(
-                                      fontSize: Sizes.fontSize14,
-                                      color: Colors.grey,
+                                const SizedBox(width: Sizes.sm),
+                                Text(
+                                  "${item.color} .",
+                                  style: const TextStyle(
+                                    fontSize: Sizes.fontSize14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                const SizedBox(width: Sizes.sm),
+                                Text(
+                                  item.shoeSize.toString(),
+                                  style: const TextStyle(
+                                    fontSize: Sizes.fontSize14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: Sizes.sm),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '\$${item.price.toStringAsFixed(2)}',
+                                  style: const TextStyle(
+                                    fontSize: Sizes.fontSize16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(color: Colors.grey),
+                                      ),
+                                      child: IconButton(
+                                        onPressed: () {
+                                          cartProvider.updateQuantity(
+                                              item, item.quantity - 1);
+                                        },
+                                        icon: const Icon(Icons.remove),
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(),
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(width: Sizes.sm),
-                                  Text(
-                                    "${item.color} .",
-                                    style: const TextStyle(
-                                      fontSize: Sizes.fontSize14,
-                                      color: Colors.grey,
+                                    const SizedBox(
+                                      width: Sizes.sm,
                                     ),
-                                  ),
-                                  const SizedBox(width: Sizes.sm),
-                                  Text(
-                                    item.shoeSize.toString(),
-                                    style: const TextStyle(
-                                      fontSize: Sizes.fontSize14,
-                                      color: Colors.grey,
+                                    Text(
+                                      item.quantity.toString(),
+                                      style: const TextStyle(
+                                        fontSize: Sizes.fontSize16,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: Sizes.sm),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    '\$${item.price.toStringAsFixed(2)}',
-                                    style: const TextStyle(
-                                      fontSize: Sizes.fontSize16,
-                                      fontWeight: FontWeight.bold,
+                                    const SizedBox(
+                                      width: Sizes.sm,
                                     ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border:
-                                              Border.all(color: Colors.grey),
-                                        ),
-                                        child: IconButton(
-                                          onPressed: () {
-                                            cartProvider.updateQuantity(
-                                                item, item.quantity - 1);
-                                          },
-                                          icon: const Icon(Icons.remove),
-                                          padding: EdgeInsets.zero,
-                                          constraints: const BoxConstraints(),
-                                        ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(color: Colors.black),
                                       ),
-                                      const SizedBox(
-                                        width: Sizes.sm,
+                                      child: IconButton(
+                                        onPressed: () {
+                                          cartProvider.updateQuantity(
+                                              item, item.quantity + 1);
+                                        },
+                                        icon: const Icon(Icons.add),
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(),
                                       ),
-                                      Text(
-                                        item.quantity.toString(),
-                                        style: const TextStyle(
-                                          fontSize: Sizes.fontSize16,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: Sizes.sm,
-                                      ),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border:
-                                              Border.all(color: Colors.black),
-                                        ),
-                                        child: IconButton(
-                                          onPressed: () {
-                                            cartProvider.updateQuantity(
-                                                item, item.quantity + 1);
-                                          },
-                                          icon: const Icon(Icons.add),
-                                          padding: EdgeInsets.zero,
-                                          constraints: const BoxConstraints(),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                );
-              },
-            ),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                color: Colors.white,
-                padding: const EdgeInsets.all(Sizes.md),
+                ),
+              );
+            },
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.primaryBackgroundColor,
+                boxShadow: [
+                  BoxShadow(
+                    spreadRadius: 1,
+                    blurRadius: 20,
+                    offset: const Offset(4.0, 4.0),
+                    color: AppColors.primaryNeutral300,
+                  ),
+                  BoxShadow(
+                    spreadRadius: 1,
+                    blurRadius: 20,
+                    offset: const Offset(-4.0, -4.0),
+                    color: AppColors.primaryBackgroundColor,
+                  )
+                ],
+              ),
+              padding: const EdgeInsets.all(Sizes.md),
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.sizeOf(context).height / 80,
+                  left: MediaQuery.sizeOf(context).height / 80,
+                  right: MediaQuery.sizeOf(context).height / 80,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -251,8 +274,8 @@ class _CartPageState extends State<CartPage> {
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

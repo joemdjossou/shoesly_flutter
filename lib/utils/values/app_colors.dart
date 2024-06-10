@@ -2,7 +2,7 @@ part of '../values.dart';
 
 class AppColors {
   static final Color primaryBackgroundColor = HexColor.fromHex("FFFFFF");
-  static final Color secondaryBackgroundColor = HexColor.fromHex("B7B7B7");
+  static final Color secondaryBackgroundColor = HexColor.fromHex("AAAAAA");
   static final Color primaryNeutral300 = HexColor.fromHex("B7B7B7");
   static final Color primaryNeutral200 = HexColor.fromHex("E7E7E7");
   static final Color primaryNeutral100 = HexColor.fromHex("F3F3F3");

@@ -31,14 +31,10 @@ Widget buildReviewItem(Review review) {
           children: [
             Row(
               children: [
-                Expanded(
-                  child: Container(
-                    height: 10,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(14),
                   ),
                 ),
               ],
@@ -60,10 +56,10 @@ Widget buildReviewItem(Review review) {
           ]),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Column(
+              return Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Center(child: CircularProgressIndicator()),
+                  Center(child: loadingReview()),
                 ],
               );
             } else if (snapshot.hasError || snapshot.data![0] == null) {
@@ -106,12 +102,29 @@ Widget buildReviewItem(Review review) {
               ),
               const SizedBox(height: Sizes.xs),
               Row(
-                children: List.generate(
-                  review.rating,
-                  (index) => const Icon(Icons.star, color: Colors.amber),
-                ),
+                children: [
+                  Row(
+                    children: List.generate(
+                      review.rating,
+                      (index) => Image.asset(
+                        'assets/icons/star.png',
+                        height: 20,
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: List.generate(
+                      (5 - review.rating),
+                      (index) => Image.asset(
+                        'assets/icons/star.png',
+                        height: 20,
+                        color: AppColors.primaryNeutral200,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: Sizes.sm),
+              AppSpaces.verticalSpace10,
               Text(
                 review.comment,
                 style: const TextStyle(
