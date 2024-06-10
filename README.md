@@ -1,4 +1,4 @@
-### Code Test Name: shoesly_flutter
+# Code Test Name: shoesly_flutter
 A code test mobile application for Priority Soft
 
 ## I. Project Setup Instructions:
