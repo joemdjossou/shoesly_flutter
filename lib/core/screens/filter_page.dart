@@ -30,14 +30,13 @@ class _FilterPageState extends State<FilterPage> {
   int _selectedBrandIndex = -1;
   List<ShoeColor> _shoeColors = [];
   String? _selectedColorName;
-  List<String>? _brandNames;
 
   @override
   void initState() {
     _fetchShoeColors();
     _fetchBrandName();
-    print(_shoeFiltered);
-    print(_brandNames);
+    // print(_shoeFiltered);
+    // print(_brandNames);
     super.initState();
   }
 
@@ -55,13 +54,10 @@ class _FilterPageState extends State<FilterPage> {
     List<Brand>? brands =
         await Provider.of<BrandsProvider>(context, listen: false)
             .fetchDocuments();
-    List<String> brandsName =
-        Provider.of<BrandsProvider>(context, listen: false).brandsName;
-    _brandNames = brandsName;
     setState(() {
       _brands = brands;
     });
-    print(_brands);
+    // print(_brands);
   }
 
   @override
@@ -157,9 +153,16 @@ class _FilterPageState extends State<FilterPage> {
                                     child: Center(
                                       child: SvgPicture.asset(
                                         'assets/icons/${brand.name}Logo_black.svg',
-                                        color: _selectedBrandIndex == index
-                                            ? Colors.white
-                                            : AppColors.blackAccentColor500,
+                                        colorFilter:
+                                            _selectedBrandIndex == index
+                                                ? ColorFilter.mode(
+                                                    AppColors
+                                                        .primaryBackgroundColor,
+                                                    BlendMode.srcIn)
+                                                : ColorFilter.mode(
+                                                    AppColors
+                                                        .blackAccentColor500,
+                                                    BlendMode.srcIn),
                                       ),
                                     ),
                                   ),

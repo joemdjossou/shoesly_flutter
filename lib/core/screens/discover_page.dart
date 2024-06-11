@@ -134,7 +134,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   void initState() {
     getData();
     super.initState();
-    print(isLoaded);
+    // print(isLoaded);
   }
 
   getData() async {
@@ -147,7 +147,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
       _filteredShoes = allShoes;
     });
 
-    print(_filteredShoes);
+    // print(_filteredShoes);
 
     //condition checking
     if (shoes!.isNotEmpty) {
@@ -212,9 +212,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                           setState(() {
                             selectedBrand = brandName;
                             _filterShoes();
-                            print(_filteredShoes.length);
-                            print(isLoaded);
-                            print(dbIsNotEmpty);
+                            // print(_filteredShoes.length);
+                            // print(isLoaded);
+                            // print(dbIsNotEmpty);
                           });
                         },
                         child: Text(

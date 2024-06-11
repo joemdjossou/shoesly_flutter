@@ -109,7 +109,7 @@ class Shoe {
         }
       }
     } catch (e) {
-      print('Error fetching reviews: $e');
+      Exception('Error fetching reviews: $e');
     }
     return reviews;
   }
@@ -126,7 +126,7 @@ class Shoe {
         }
       }
     } catch (e) {
-      print('Error getting shoe colors: $e');
+      Exception('Error getting shoe colors: $e');
     }
     return shoeColors;
   }

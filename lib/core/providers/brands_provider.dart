@@ -21,7 +21,7 @@ class BrandsProvider extends ChangeNotifier {
         String rawBrand = doc['name'];
 
         allBrands.add(rawBrand.toString());
-        print(rawBrand);
+        // print(rawBrand);
 
         fetchedbrands.add(
           Brand(
@@ -38,7 +38,7 @@ class BrandsProvider extends ChangeNotifier {
       notifyListeners();
       return brand;
     } catch (e) {
-      print("Error fetching data: $e");
+      Exception("Error fetching data: $e");
       return brand;
     }
   }

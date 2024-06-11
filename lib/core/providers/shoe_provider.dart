@@ -21,17 +21,17 @@ class ShoeProvider extends ChangeNotifier {
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
         List<DocumentReference> colorRefs =
             List<DocumentReference>.from(doc['colors']);
-        print(colorRefs);
+        // print(colorRefs);
         List<DocumentReference> reviewRefs =
             List<DocumentReference>.from(doc['reviews']);
-        print(reviewRefs);
+        // print(reviewRefs);
 
         List<double> sizes = [];
         List<dynamic> rawSizes = doc['sizes'];
 
         for (var size in rawSizes) {
           sizes.add(size.toDouble());
-          print(sizes);
+          // print(sizes);
         }
 
         fetchedShoes.add(
@@ -55,7 +55,7 @@ class ShoeProvider extends ChangeNotifier {
       notifyListeners();
       return shoes;
     } catch (e) {
-      print("Error fetching data: $e");
+      Exception("Error fetching data: $e");
       return shoes;
     }
   }

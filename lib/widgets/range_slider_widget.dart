@@ -9,10 +9,10 @@ class PriceRangeSlider extends StatefulWidget {
   const PriceRangeSlider({super.key});
 
   @override
-  _PriceRangeSliderState createState() => _PriceRangeSliderState();
+  PriceRangeSliderState createState() => PriceRangeSliderState();
 }
 
-class _PriceRangeSliderState extends State<PriceRangeSlider> {
+class PriceRangeSliderState extends State<PriceRangeSlider> {
   SfRangeValues _values = const SfRangeValues(539.0, 1130.0);
 
   @override

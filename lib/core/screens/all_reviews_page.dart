@@ -1,8 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:shoesly_flutter/core/models/shoe_model.dart';
 import 'package:shoesly_flutter/core/providers/selected_shoe_provider.dart';
 import 'package:shoesly_flutter/core/models/review_model.dart';
 import 'package:shoesly_flutter/utils/values.dart';
@@ -198,16 +196,14 @@ class _ReviewsPageState extends State<ReviewsPage> {
               ),
               AppSpaces.horizontalSpace5,
               Text(
-                "${average}",
-                style: TextStyle(
+                "$average",
+                style: const TextStyle(
                   fontSize: Sizes.fontSize14,
                   fontWeight: FontWeight.w700,
                   color: Colors.black,
                 ),
               ),
-              SizedBox(
-                width: Sizes.sm,
-              ),
+              AppSpaces.horizontalSpace10,
             ],
           )
         ],

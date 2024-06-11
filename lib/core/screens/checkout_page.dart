@@ -53,7 +53,7 @@ class CheckoutPage extends StatelessWidget {
 
         Navigator.pushReplacementNamed(context, DiscoverPage.id);
       } catch (error) {
-        print('Error placing order: $error');
+        Exception('Error placing order: $error');
       }
     }
 

@@ -14,7 +14,7 @@ A code test mobile application for Priority Soft
 
 2. **Firebase Setup:**
     - Obtain the necessary Firebase configuration files like the Firebase CLI to start
-    - The API KEY and data has been secured in an .env file to leverage the usability for all
+    - The API KEY and data have not been secured in an .env file  or any crypted file to leverage the usability for all
     - Fetch the packages by pressing the command:
       ```
       pub get
