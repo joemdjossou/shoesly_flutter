@@ -31,7 +31,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
     "Jordan",
     "Adidas",
     "Reebok",
-    "Vans"
+    "Vans",
+    "Puma",
   ];
 
   //initializing the shoes to be empty
